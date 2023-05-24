@@ -1,0 +1,4 @@
+
+brew install poppler
+brew install djvulibre
+

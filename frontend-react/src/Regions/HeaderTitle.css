@@ -1,0 +1,20 @@
+
+
+
+
+.titleh{
+    font-size: 4rem;
+    white-space: nowrap;
+}
+
+
+@media (max-width: 575.98px) {
+    .titleh{
+        font-size: 3rem;
+        white-space: break-spaces;
+    }
+}
+
+
+
+
