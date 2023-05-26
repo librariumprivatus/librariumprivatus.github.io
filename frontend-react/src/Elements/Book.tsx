@@ -258,10 +258,66 @@ export function DirListItem(props: any){
     if (props.sumHeight !== undefined)
         sumHeight += props.sumHeight
 
+
+    let dirs = []
+    let files = []
+
+    for (var key  in props.childs) {
+        // @ts-ignore
+        if(context.elements[key]["type"] === "dir"){
+            dirs.push(key)
+        }else{
+            files.push(key)
+        }
+    }
+
+
+    function compareElems(a: any, b: any) {
+        // @ts-ignore
+        if (context.elements[a]["title"] > context.elements[b]["title"]) {
+            return 1;
+        }
+        // @ts-ignore
+        if (context.elements[a]["title"] < context.elements[b]["title"]) {
+            return -1;
+        }
+        return 0;
+    }
+
+    const sdirs = dirs.sort(compareElems);
+
+    const sfiles = files.sort(compareElems);
+
+
     return (
-        <div className={'mb-2'}>
-            <div className={"sticky"} ref={observedDiv} style={{top: parentSumHeight, zIndex: 99-level}}>
-                <strong>🗂 {element.title}</strong></div>
+        <div className={'mb-2 d-flex flex-column'}>
+            <div className={"sticky d-inline-flex"} ref={observedDiv} style={{top: parentSumHeight, zIndex: 99-level}}>
+                <div className={"tree-dir-title"}>
+                    <strong>🗂 {element.title}</strong></div>
+                <div className={"tree-dir-title-navigations d-inline-flex"}>
+                    <a className="link-danger px-1" onClick={handleClickCollapse}>
+                        {collapsed ? <TbLayoutBottombarCollapse/> : <TbLayoutNavbarCollapse/> }
+                        {showIconsText && <>
+                            &nbsp;
+                            {collapsed ? "Collapse Down": "Collapse Up"}</>}</a>
+
+
+                    <a className="link-primary px-1" onClick={handleClickChildCollapse}>
+                        {childCollapsed ? <TbLayoutNavbarCollapse/> : <TbLayoutBottombarCollapse/>}
+                        {showIconsText && <>
+                            &nbsp;
+                            {childCollapsed ? "Collapse Down": "Collapse Up"}</>}</a>
+
+
+                    <a className="link-primary px-1" onClick={handleClickGlobalChildCollapse}>
+                        {childCollapsed ? <BsArrowUpLeftSquare/> : <BsArrowDownRightSquare/>}
+                        {showIconsText && <>
+                            &nbsp;
+                            {childCollapsed ? "Global Collapse Down": "Global Collapse Up"}</>}</a>
+
+
+                </div>
+            </div>
 
             <br className={"d-none"}/>
 
@@ -271,26 +327,6 @@ export function DirListItem(props: any){
 
                 <div className={"d-none"}><SharepointItemLink path={element.path} typeItem={ItemTypeMSOneDrive.Dir}/></div>
 
-
-                <a className="link-danger" onClick={handleClickCollapse}>
-                    {collapsed ? <TbLayoutBottombarCollapse/> : <TbLayoutNavbarCollapse/> }
-                    {showIconsText && <>
-                        &nbsp;
-                        {collapsed ? "Collapse Down": "Collapse Up"}</>}</a>
-
-
-                <a className="link-primary" onClick={handleClickChildCollapse}>
-                    {childCollapsed ? <TbLayoutNavbarCollapse/> : <TbLayoutBottombarCollapse/>}
-                    {showIconsText && <>
-                        &nbsp;
-                        {childCollapsed ? "Collapse Down": "Collapse Up"}</>}</a>
-
-
-                <a className="link-primary" onClick={handleClickGlobalChildCollapse}>
-                    {childCollapsed ? <BsArrowUpLeftSquare/> : <BsArrowDownRightSquare/>}
-                    {showIconsText && <>
-                        &nbsp;
-                        {childCollapsed ? "Global Collapse Down": "Global Collapse Up"}</>}</a>
 
 
                 {!collapsed &&
@@ -309,37 +345,31 @@ export function DirListItem(props: any){
                     <div>
                         🔹 gridView: {gridView? "🟢 True" : "🔴 False"}</div>
                 </>}
-
-
-
-
             </div>
 
 
 
             <ul key={props.id} className={"pt-2"} style={{ display: collapsed ? "none" : "block" }}>
-            {Object.keys(props.childs).map((child_id: any) => {
-                const childs_of_child = props.childs[child_id];
-                if (child_id.startsWith('ds-store')){
-                    const  t = '';
-                }
-                else {
+                {dirs.map((dir_id: any) => {
+                    const childs_of_child = props.childs[dir_id];
                     if (childs_of_child != null) {
-                        return (<li key={child_id}>
-                            <DirListItem
-                                id={child_id} childs={childs_of_child}
-                                parentCollapsed={makeChildCollapsed}
-                                parentGlobalCollapsed={makeChildGlobalCollapsed}
-                                level={level}
-                                sumHeight={sumHeight}
-                            /></li>)
-                    } else {
-                        return (<li key={child_id}>
-                            <BookLisItem id={child_id}/></li>)
-                    }
+                        return (
+                            <li key={dir_id}>
+                                <DirListItem
+                                    id={dir_id} childs={childs_of_child}
+                                    parentCollapsed={makeChildCollapsed}
+                                    parentGlobalCollapsed={makeChildGlobalCollapsed}
+                                    level={level}
+                                    sumHeight={sumHeight}/></li>)}
+                })}
+            </ul>
+
+            <ul key={props.id} className={"pt-2"} style={{ display: collapsed ? "none" : "block" }}>
+                {files.map((file_id: any) => {
+                    return(
+                        <li key={file_id}>
+                            <BookLisItem id={file_id}/></li>)})
                 }
-            })
-            }
             </ul>
         </div>
     );
