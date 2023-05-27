@@ -83,14 +83,14 @@ function getTypedURL(path: string, type: ItemTypeMSOneDrive) {
 }
 
 // @ts-ignore
-export function SharepointItemLink(props: {path: string, typeItem: ItemTypeMSOneDrive}){
+export function SharepointItemLink(props: {path: string, typeItem: ItemTypeMSOneDrive, showText: boolean}){
     let text_link = "Download"
     if (props.typeItem == ItemTypeMSOneDrive.Dir)
         text_link = "Discover"
 
     return(
         <a href={getTypedURL(props.path, props.typeItem)} target={"_blank"}>
-            <ImOnedrive/> {text_link}
+            <ImOnedrive/> {props.showText && text_link}
         </a>);
 }
 

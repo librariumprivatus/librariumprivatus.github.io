@@ -12,3 +12,8 @@
     top: 0;
     background-color: #ffffff;
 }
+
+
+.tree-dirs-ul, .tree-files-ul{
+    list-style-type: none;
+}

@@ -1,8 +1,8 @@
-import React from "react";
+import React, {useContext} from "react";
 import useSWR from "swr";
 import axios from "axios";
 import * as Config from "../Config/Config";
-
+import {useCookies} from "react-cookie";
 
 export const GlobalStoreContext = React.createContext({
     elements: {},
@@ -14,6 +14,12 @@ export const GlobalStoreContext = React.createContext({
         'defaultMonths': [],
     },
     months: [],
+    gridSize: 4
+});
+
+export const GridSizeGlobalContext = React.createContext({
+    gridSize: 4,
+    setGridSize: (value: number) => {},
 });
 
 export function useGlobalStore() {
@@ -61,16 +67,30 @@ export function GlobalStoreProvider2(props: any) {
             key={json.url.href}
             context={context}
             url={json.url}
-            context_name={json.context_name}
-        />
+            context_name={json.context_name}/>
     );
 
+    const contextGridSize = useContext(GridSizeGlobalContext)
+
+    const [cookies, setCookie] = useCookies(['gridSize']);
+
+
+    if(isNaN(parseInt(cookies.gridSize))){
+        setCookie('gridSize', contextGridSize.gridSize, { path: '/' })}
+
+    if(!isNaN(parseInt(cookies.gridSize))){
+        contextGridSize.gridSize = parseInt(cookies.gridSize)}
+
+
     return (<>
+        <h6><i>Cookies: {cookies.gridSize}</i></h6>
+        <br/>
         {swr_items}
         <br/>
-
         <GlobalStoreContext.Provider value={context}>
-            {props.children}
+            <GridSizeGlobalContext.Provider value={contextGridSize}>
+                {props.children}
+            </GridSizeGlobalContext.Provider>
         </GlobalStoreContext.Provider>
     </>)
 

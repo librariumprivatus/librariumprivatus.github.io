@@ -15,6 +15,7 @@ import Books from "./Pages/Books";
 import BooksByMonths from "./Pages/BooksByMonths";
 // @ts-ignore
 import { Helmet } from "react-helmet"
+import {TreeParam} from "./Elements/Book";
 
 
 
@@ -55,6 +56,7 @@ export default function App() {
                 <Route index element={<Home/>} />
                 <Route path="grid" element={<Grid />} />
                 <Route path="tree" element={<Tree />} />
+                <Route path="treeid/:tree_id?" element={<TreeParam />} />
                 <Route path="about" element={<About />} />
                 <Route path="sandbox" element={<Sandbox />} />
                 <Route path="shelf/:id_short?" element={<Shelf />} />

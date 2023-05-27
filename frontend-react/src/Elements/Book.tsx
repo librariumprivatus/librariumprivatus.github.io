@@ -13,6 +13,8 @@ import { TbLayoutBottombarCollapse, TbLayoutNavbarCollapse } from "react-icons/t
 import {BsArrowDownRightSquare, BsArrowUpLeftSquare} from "react-icons/bs";
 import { MdGridOff, MdGridOn } from "react-icons/md";
 import {useEffect, useLayoutEffect, useRef, useState} from "react";
+import {GridBooks} from "../Pages/Books";
+import {useParams} from "react-router-dom";
 
 
 export function CardBook(props: any){
@@ -72,9 +74,9 @@ export function BookByID(props: any){
     // @ts-ignore
     return (
         <Col>
-            <Card className="book-card shadow mb-5 bg-body rounded-0">
+            <Card className="book-card mb-5 border-0 ">
                 <div
-                    className={"book-card-img"}
+                    className={"book-card-img shadow rounded-0 bg-body"}
                     style={{
                         aspectRatio: aspectRatio
                     }}>
@@ -90,7 +92,7 @@ export function BookByID(props: any){
                         {book.title}
                     </Card.Title>
                     <p>
-                        <SharepointItemLink path={book.path} typeItem={ItemTypeMSOneDrive.File}/>
+                        <SharepointItemLink path={book.path} typeItem={ItemTypeMSOneDrive.File} showText={false}/>
                     </p>
                     <p>
                         book.cover: {1000/book.cover_ratio}
@@ -138,7 +140,7 @@ export function BookLisItem(props: any){
                 <strong>🔹 {element.title}</strong>
                 <small className={"text-muted px-1"} style={{display: "none"}}>ID: {props.id}</small>
 
-                <small className={"px-1"}><SharepointItemLink path={element.path} typeItem={ItemTypeMSOneDrive.File}/></small>
+                <small className={"px-1"}><SharepointItemLink path={element.path} typeItem={ItemTypeMSOneDrive.File} showText={false}/></small>
 
             </div>
         </div>
@@ -204,10 +206,6 @@ export function DirListItem(props: any){
         },
         // only update the effect if the observedDiv element changed
         [observedDiv.current])
-
-
-
-
 
 
 
@@ -289,6 +287,7 @@ export function DirListItem(props: any){
     const sfiles = files.sort(compareElems);
 
 
+    // @ts-ignore
     return (
         <div className={'mb-2 d-flex flex-column'}>
             <div className={"sticky d-inline-flex"} ref={observedDiv} style={{top: parentSumHeight, zIndex: 99-level}}>
@@ -315,29 +314,29 @@ export function DirListItem(props: any){
                             &nbsp;
                             {childCollapsed ? "Global Collapse Down": "Global Collapse Up"}</>}</a>
 
+                    {!collapsed &&
+                        <a className="link-primary"
+                           onClick={() => setGridView(existingValue => !existingValue)}>
+                            {gridView ? <MdGridOn/> : <MdGridOff/>}
+                            {showIconsText && <>
+                                &nbsp;
+                                {gridView ? "Off Grid View": "On Grid View "}</>}</a>}
+
+                    <div className={""}>
+                        <SharepointItemLink path={element.path} typeItem={ItemTypeMSOneDrive.Dir} showText={false}/></div>
+
 
                 </div>
             </div>
 
             <br className={"d-none"}/>
 
-            <div className={"elementDescription small px-4  d-inline-flex gap-3"}>
-                <span className="text-muted d-none">
-                    ID: {props.id}</span>
-
-                <div className={"d-none"}><SharepointItemLink path={element.path} typeItem={ItemTypeMSOneDrive.Dir}/></div>
-
-
-
-                {!collapsed &&
-                    <a className="link-primary"
-                       onClick={() => setGridView(existingValue => !existingValue)}>
-                        {gridView ? <MdGridOff/> : <MdGridOn/>}
-                        {showIconsText && <>
-                            &nbsp;
-                            {gridView ? "Off Grid View": "On Grid View "}</>}</a>}
+            <div className={"elementDescription small px-4  d-none gap-3"}>
 
                 {showStatusText && <>
+                    <div className="text-muted d-none">
+                        ID: {props.id}</div>
+
                     <div>
                         🔹 collapsed: {collapsed ?  "🔐 Closed" : "📖 Open"}</div>
                     <div>
@@ -349,31 +348,46 @@ export function DirListItem(props: any){
 
 
 
-            <ul key={props.id} className={"pt-2"} style={{ display: collapsed ? "none" : "block" }}>
+            <ul className={"mb-0 pt-2 tree-dirs-ul"} key={props.id+"_dirs"} style={{ display: collapsed ? "none" : "block" }}>
                 {dirs.map((dir_id: any) => {
                     const childs_of_child = props.childs[dir_id];
                     if (childs_of_child != null) {
                         return (
-                            <li key={dir_id}>
+                            <li key={dir_id+"_dirs_li"}>
                                 <DirListItem
                                     id={dir_id} childs={childs_of_child}
                                     parentCollapsed={makeChildCollapsed}
                                     parentGlobalCollapsed={makeChildGlobalCollapsed}
                                     level={level}
-                                    sumHeight={sumHeight}/></li>)}
-                })}
-            </ul>
+                                    sumHeight={sumHeight}/></li>)}})}</ul>
 
-            <ul key={props.id} className={"pt-2"} style={{ display: collapsed ? "none" : "block" }}>
-                {files.map((file_id: any) => {
-                    return(
-                        <li key={file_id}>
-                            <BookLisItem id={file_id}/></li>)})
-                }
-            </ul>
+
+            {gridView
+                ? <ul key={props.id+"_files"} className={"tree-files-ul"} style={{ display: collapsed ? "none" : "block" }}>
+                    {files.map((file_id: any) => {
+                        return(
+                            <li key={file_id+"_files_li"}>
+                                <BookLisItem id={file_id}/></li>)})}</ul>
+                : <div className={"px-5"}>
+                    <h6>Grid Book List</h6>
+                    <GridBooks books_ids={files}/>
+                </div>
+            }
+
+
         </div>
     );
 }
 
+
+export function TreeParam(props: any) {
+    let { tree_id } = useParams();
+    return (<>
+        <h4>tree_id</h4>
+        <br/>
+        {tree_id}
+
+    </>);
+}
 
 

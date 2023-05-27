@@ -24,7 +24,7 @@ function BooksByMonths() {
                 <h4>{getHumanReadable_YYMM(month)}</h4>
                 <small>{month}</small>
                 <br/>
-                <GridBooks books_ids={context.booksByMonths[month]}></GridBooks>
+                <GridBooks books_ids={context.booksByMonths[month]}/>
             </>)
         )}
     </>);
