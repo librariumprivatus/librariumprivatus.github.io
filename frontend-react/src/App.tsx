@@ -16,6 +16,8 @@ import BooksByMonths from "./Pages/BooksByMonths";
 // @ts-ignore
 import { Helmet } from "react-helmet"
 import {TreeParam} from "./Elements/Book";
+import Preferences from "./Pages/Preferences";
+import OneBook from "./Pages/OneBook";
 
 
 
@@ -34,8 +36,8 @@ export const menuList2 = [
     {path: '/books', title: 'Books Grid'},
     {path: '/months', title: 'Months Books Grid'},
     {path: '/about', title: 'About'},
-    {path: '/sandbox', title: 'Sandbox'}
-
+    {path: '/sandbox', title: 'Sandbox'},
+    {path: '/preferences', title: 'Preferences'}
 ]
 
 
@@ -62,6 +64,8 @@ export default function App() {
                 <Route path="shelf/:id_short?" element={<Shelf />} />
                 <Route path="books" element={<Books />} />
                 <Route path="months" element={<BooksByMonths />} />
+                <Route path="preferences" element={<Preferences />} />
+                <Route path="book/:book_id?" element={<OneBook />} />
 
                 <Route path="*" element={<NoMatch />} />
             </Route>

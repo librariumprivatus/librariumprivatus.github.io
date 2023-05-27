@@ -25,11 +25,13 @@ export function CardBook(props: any){
     return (
             <Card className="book-card shadow mb-5 bg-body rounded-0">
                 <div className={"book-card-img"} >
-                    <LazyLoadImage
-                        className={"card-img-top rounded-0"}
-                        src={cover_book_url}
-                        effect="blur"
-                    />
+                    <div className={"book-card-img-default"} style={{}}>
+                        <LazyLoadImage
+                            className={"card-img-top rounded-0"}
+                            src={cover_book_url}
+                            effect="blur"
+                        />
+                    </div>
                 </div>
                 <Card.Body>
                     <Card.Title>
@@ -65,11 +67,21 @@ export function BookByID(props: any){
     const no_cover_url = "/bg-no-book-cropped.png"
     const cover_book_url = new URL(book.cover, Config.covers_dir_url).href
 
-    let aspectRatio =  700
-    if (book.cover)
-        aspectRatio = 1000/book.cover_ratio
+    let aspectRatio: number =  700
+
+    let cover_ratio = 0
 
 
+    if (book.cover){
+        cover_ratio = Number(book.cover_ratio)
+        aspectRatio = 1/Number(book.cover_ratio)
+    }
+
+    const book_url = "#/book/"+props.id
+
+    /*
+    src={!book.cover ? no_cover_url : cover_book_url}
+     */
 
     // @ts-ignore
     return (
@@ -78,28 +90,38 @@ export function BookByID(props: any){
                 <div
                     className={"book-card-img shadow rounded-0 bg-body"}
                     style={{
-                        aspectRatio: aspectRatio
+                        aspectRatio: aspectRatio,
+                        backgroundImage: `url(${no_cover_url})`,
+                        backgroundSize: "cover",
                     }}>
-                    <LazyLoadImage
-                        className={"card-img-top rounded-0 text-center"}
-                        src={!book.cover ? no_cover_url : cover_book_url}
-                        effect="blur"
-                        threshold={5000}
-                    />
+                    {book.cover &&
+                        <LazyLoadImage
+                            className={"card-img-top rounded-0 text-center"}
+                            src={cover_book_url}
+                            effect="blur"
+                            threshold={5000}
+                        />}
                 </div>
                 <Card.Body>
-                    <Card.Title>
-                        {book.title}
-                    </Card.Title>
-                    <p>
+                    <div className={"h5"}>
+                        {book.title}</div>
+
+                    <div className={""}>
                         <SharepointItemLink path={book.path} typeItem={ItemTypeMSOneDrive.File} showText={false}/>
-                    </p>
-                    <p>
-                        book.cover: {1000/book.cover_ratio}
-                    </p>
-                    <p>
-                        ratio: {book.ratio}
-                    </p>
+                        <small>
+                            <a href={book_url}>
+                                book / {book.id}
+                            </a>
+                        </small>
+                    </div>
+
+                    <div className={"d-none"}>
+                        books.cover_ratio: {book.cover_ratio}
+                        <br/>
+                        cover_ratio: {cover_ratio}
+                        <br/>
+                        aspectRatio: {aspectRatio}
+                    </div>
 
                 </Card.Body>
             </Card>

@@ -14,7 +14,8 @@ export const GlobalStoreContext = React.createContext({
         'defaultMonths': [],
     },
     months: [],
-    gridSize: 4
+    gridSize: 4,
+    sharepointURL: "sharepointURL-default"
 });
 
 export const GridSizeGlobalContext = React.createContext({
@@ -54,8 +55,7 @@ function SWRgetJSON(props:any){
     // @ts-ignore
     //console.log(context[props.context_name])
 
-    return (
-        <p>🟢 Success! (<a href={props.url.href}>{props.url.pathname.split('/').pop()})</a></p>);
+    return (<></>);
 }
 
 
@@ -82,17 +82,14 @@ export function GlobalStoreProvider2(props: any) {
         contextGridSize.gridSize = parseInt(cookies.gridSize)}
 
 
-    return (<>
-        <h6><i>Cookies: {cookies.gridSize}</i></h6>
-        <br/>
+    return (<div>
         {swr_items}
-        <br/>
         <GlobalStoreContext.Provider value={context}>
             <GridSizeGlobalContext.Provider value={contextGridSize}>
                 {props.children}
             </GridSizeGlobalContext.Provider>
         </GlobalStoreContext.Provider>
-    </>)
+    </div>)
 
 
 }

@@ -39,37 +39,9 @@ const gridSizeOptions = {
 
 
 export function GridBooks(props: any){
-
     const contextGridSize = useContext(GridSizeGlobalContext);
 
-    const minGridSize = 1
-    const maxGridSize = 6
-
-    const [cookies, setCookie] = useCookies(['gridSize']);
-
-    function plus() {
-        contextGridSize.gridSize = Math.min(contextGridSize.gridSize+1, maxGridSize)
-        setCookie('gridSize', contextGridSize.gridSize, { path: '/' })
-    }
-
-    function minus() {
-        contextGridSize.gridSize = Math.max(contextGridSize.gridSize-1, minGridSize)
-        setCookie('gridSize', contextGridSize.gridSize, { path: '/' })
-    }
-
-
     return(<>
-        <div>
-            <div className="btn-group px-2" role="group" aria-label="Basic example">
-                <button onClick={plus} type="button" className="btn btn-light"><SlMagnifierRemove/> More</button>
-                <button onClick={minus} type="button" className="btn btn-light"><SlMagnifierAdd/> Less</button>
-            </div>
-            contextGridSize.gridSize: {contextGridSize.gridSize}
-
-
-        </div>
-        <br/>
-
         <Row xs={contextGridSize.gridSize}
              sm={contextGridSize.gridSize}
              md={contextGridSize.gridSize}
