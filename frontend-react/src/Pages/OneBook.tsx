@@ -1,28 +1,15 @@
 import * as React from "react";
-import {GridSizeGlobalContext, useGlobalStore} from "../Elements/GlobalStore";
-import {BookByID, CardBook, DirListItem} from "../Elements/Book";
+import {useGlobalStore} from "../Elements/GlobalStore";
 import Row from "react-bootstrap/Row";
-import {WelcomeLinkSharepoint} from "../Elements/Sharepoint";
-import {
-    AiOutlineMinusSquare,
-    BsPlusSquare,
-    HiMagnifyingGlassPlus,
-    HiOutlineMagnifyingGlassPlus,
-    SlMagnifierAdd, SlMagnifierRemove
-} from "react-icons/all";
-import {useContext, useState} from "react";
-import {useCookies} from "react-cookie";
+
 import {useParams} from "react-router-dom";
 import Col from "react-bootstrap/Col";
 import * as Config from "../Config/Config";
 
-
 import "./OneBook.css";
-
 
 function OneBook() {
     let { book_id} = useParams();
-
 
     const context = useGlobalStore()
     // @ts-ignore
@@ -34,7 +21,9 @@ function OneBook() {
     }
 
     return (<>
-        <h1>OneBook</h1>
+        <div className={"mb-3"}>
+            <h2>📚 {book && book.title}</h2></div>
+
 
         <div className={"dev mb-3"}>
             <strong>URL Param</strong>
@@ -42,7 +31,6 @@ function OneBook() {
             {book_id}
             <br/>
         </div>
-
 
         <Row>
             <Col xs={12} sm={1}  md={1} lg={2} xl={2}/>

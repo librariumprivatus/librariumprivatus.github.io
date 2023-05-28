@@ -25,7 +25,7 @@ function GridSizePreferences() {
         setCookie('gridSize', contextGridSize.gridSize, { path: '/' })
     }
     return (<div className={"mb-4"}>
-        <div className="btn-group px-2" role="group" aria-label="Basic example">
+        <div className="btn-group btn-group-sm px-2" role="group" aria-label="Basic example">
             <button onClick={plus} type="button" className="btn btn-outline-primary"><SlMagnifierRemove/> More</button>
             <button onClick={minus} type="button" className="btn btn-outline-primary"><SlMagnifierAdd/> Less</button>
         </div>
@@ -67,7 +67,7 @@ function MSOneDrivePreferences() {
             </span>
             <div className="form-floating">
                 <input type="text" className="form-control" name="code1" placeholder="Code 1" onChange={handleChange}/>
-                    <label htmlFor="code1">
+                    <label className={"form-control-sm"} htmlFor="code1">
                         {context.sharepointURL}</label>
             </div>
             <button className="input-group-text btn btn-outline-secondary" type="button" id="button-addon2">
@@ -78,8 +78,6 @@ function MSOneDrivePreferences() {
 
 
 function JSONSlistLoaded() {
-
-
     return (<div>
         <ul>
             {Config.jsons.map((json) =>
@@ -96,28 +94,40 @@ function Preferences() {
     const context = useGlobalStore()
 
     return (<>
-        <h4>Preferences</h4>
+        <h4>🔮 Preferences</h4>
         <div className={"container"}>
 
-            <h5>🍏 GridSizePreferences</h5>
-            <GridSizePreferences/>
+            <ul>
+                <li>
+                    <h5>🍏 GridSizePreferences</h5>
+                    <GridSizePreferences/>
+                    <div className={"mb-4"}/>
+                </li>
+                <li>
+                    <h5>🍎 Cookies Preferences</h5>
+                    <CookiesPreferences/>
+                    <div className={"mb-4"}/>
+                </li>
+                <li>
 
-            <h5>🍎 Cookies Preferences</h5>
-            <CookiesPreferences/>
+                    <h5>🍐 MS One Drive Preferences</h5>
+                    <div className={"mb-2"}>URL: {context.sharepointURL}</div>
+                    <MSOneDrivePreferences/>
+                    <div className={"mb-4"}/>
+                </li>
+                <li>
 
-            <h5>🍐 MS One Drive Preferences</h5>
-            <MSOneDrivePreferences/>
-            <div>
-                URL {context.sharepointURL}
-            </div>
+                    <h5>🍊 JSONS</h5>
+                    <JSONSlistLoaded/>
+                    <div className={"mb-4"}/>
 
-            <h5>🍊 JSONS</h5>
-            <JSONSlistLoaded/>
+                </li>
+                <li>
 
 
-
-
-            <h5> 🍋 🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🫐 🍈 🍒 🍑 🥭 🍍 🥥 🥝 🍅 🍆 🥑 🥦 🥬 🥒 🌶 🫑 🌽 🥕</h5>
+                    <h5> 🍋 🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🫐 🍈 🍒 🍑 🥭 🍍 🥥 🥝 🍅 🍆 🥑 🥦 🥬 🥒 🌶 🫑 🌽 🥕</h5>
+                </li>
+            </ul>
 
         </div></>);
 }

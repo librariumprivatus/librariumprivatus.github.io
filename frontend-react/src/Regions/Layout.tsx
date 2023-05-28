@@ -6,23 +6,17 @@ import {Col} from "react-bootstrap";
 
 import Header from "./Header";
 import Main from "./Main";
+import Footer from "./Footer";
 
 
 function LayoutContent(){
     return (<>
-        <Header></Header>
+        <Header/>
         <hr />
 
-        <Main></Main>
-        <hr />
+        <Main/>
+        <Footer/>
 
-        <footer className="py-3 my-4">
-            <p className="text-center text-muted">© 2022 Company, Inc</p>
-            <p className="text-center text-muted pt-5 pb-5">1</p>
-            <p className="text-center text-muted pt-5 pb-5">2</p>
-            <p className="text-center text-muted pt-5 pb-5">3</p>
-            <p className="text-center text-muted pt-5 pb-5">4</p>
-        </footer>
     </>)
 }
 
@@ -32,7 +26,7 @@ function Layout() {
         <Container fluid="sm">
             <Row>
                 <Col>
-                    <LayoutContent></LayoutContent>
+                    <LayoutContent/>
                 </Col>
             </Row>
         </Container>

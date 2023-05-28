@@ -7,12 +7,12 @@ import "./Book.css";
 
 // @ts-ignore
 import {LazyLoadImage} from 'react-lazy-load-image-component';
-import {useGlobalStore} from "./GlobalStore";
+import {GridSizeGlobalContext, useGlobalStore} from "./GlobalStore";
 import {ItemTypeMSOneDrive, SharepointItemLink} from "./Sharepoint";
 import { TbLayoutBottombarCollapse, TbLayoutNavbarCollapse } from "react-icons/tb";
 import {BsArrowDownRightSquare, BsArrowUpLeftSquare} from "react-icons/bs";
 import { MdGridOff, MdGridOn } from "react-icons/md";
-import {useEffect, useLayoutEffect, useRef, useState} from "react";
+import {useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
 import {GridBooks} from "../Pages/Books";
 import {useParams} from "react-router-dom";
 
@@ -79,6 +79,12 @@ export function BookByID(props: any){
 
     const book_url = "#/book/"+props.id
 
+    const contextGridSize = useContext(GridSizeGlobalContext);
+
+    let titleSize = "h5"
+    if(contextGridSize.gridSize >= 5)
+        titleSize = "h6"
+
     /*
     src={!book.cover ? no_cover_url : cover_book_url}
      */
@@ -103,7 +109,7 @@ export function BookByID(props: any){
                         />}
                 </div>
                 <Card.Body>
-                    <div className={"h5"}>
+                    <div className={titleSize}>
                         {book.title}</div>
 
                     <div className={""}>

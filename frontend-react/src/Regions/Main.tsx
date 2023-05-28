@@ -5,7 +5,7 @@ import { CookiesProvider } from 'react-cookie';
 
 function Main() {
     return (
-        <main>
+        <main className={"mb-5"}>
             <CookiesProvider>
                 <GlobalStoreProvider2>
                     <Outlet />
