@@ -13,7 +13,7 @@ import BooksAll from "./Pages/BooksAll";
 import BooksByMonths from "./Pages/BooksByMonths";
 // @ts-ignore
 import { Helmet } from "react-helmet"
-import {TreeParamPage} from "./Pages/TreeParamPage";
+import {TreeParamPage} from "./Pages/TreePage";
 import Preferences from "./Pages/Preferences";
 import OneBook from "./Pages/OneBook";
 import BooksRandom from "./Pages/BooksRandom";
@@ -34,7 +34,6 @@ export const menuList = [
 export const menuList2 = [
     {path: '/', title: 'Home'},
     {path: '/tree', title: 'Tree'},
-    {path: '/treeid', title: 'TreeID'},
     {path: '/books', title: 'Books All'},
     {path: '/months', title: 'Months Books Grid'},
     {path: '/random', title: 'Random Books'},
@@ -60,8 +59,7 @@ export default function App() {
         <Routes>
             <Route path="/" element={<Layout />}>
                 <Route index element={<Home/>} />
-                <Route path="tree" element={<TreePage />} />
-                <Route path="treeid/:tree_id?" element={<TreeParamPage />} />
+                <Route path="tree/:tree_id?" element={<TreeParamPage />} />
                 <Route path="about" element={<AboutPage />} />
                 <Route path="sandbox" element={<Sandbox />} />
                 <Route path="shelf/:id_short?" element={<Shelf />} />

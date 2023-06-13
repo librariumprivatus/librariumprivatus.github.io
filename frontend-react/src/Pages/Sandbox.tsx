@@ -14,6 +14,7 @@ import {CiViewList} from "react-icons/ci";
 import {FaRegListAlt} from "react-icons/fa";
 import {TfiLayoutGrid3Alt} from "react-icons/tfi";
 import {MdGridOff, MdGridOn} from "react-icons/md";
+import {Link} from "react-router-dom";
 
 
 function Button() {
@@ -51,6 +52,9 @@ function Sandbox() {
     return (
         <>
             <Box></Box>
+
+            <Link to={'/tree'}>Link To tree</Link>
+
             <div>
                 <h3>Icons Good</h3>
                 <small>

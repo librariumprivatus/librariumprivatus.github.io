@@ -13,10 +13,11 @@ import { TbLayoutBottombarCollapse, TbLayoutNavbarCollapse } from "react-icons/t
 import {BsArrowDownRightSquare, BsArrowUpLeftSquare, BsTreeFill} from "react-icons/bs";
 import { MdGridOff, MdGridOn } from "react-icons/md";
 import {useContext, useEffect, useRef, useState} from "react";
-import {Link, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Button, Modal} from "react-bootstrap";
 import {FaExpandArrowsAlt, FaExternalLinkAlt} from "react-icons/all";
 import Row from "react-bootstrap/Row";
+import {TreeLink} from "../Pages/TreePage";
 
 
 export function SingleBookFullDetails(props:any){
@@ -185,18 +186,8 @@ const showIconsText = false;
 const showStatusText = true;
 
 
-function TreeLink(props: any){
-    const url = '/#/treeid/'+props.id
-
-    return(<>
-        <a className="link-primary px-1" href={url}>
-            <BsTreeFill /></a>
-    </>)
-}
-
 
 export function DirListItem(props: any){
-
 
     const [gridView, setGridView] = useState<boolean>(true)
 
@@ -362,11 +353,9 @@ export function DirListItem(props: any){
                                 &nbsp;
                                 {gridView ? "Off Grid View": "On Grid View "}</>}</a>}
 
-                    <div className={""}>
-                        <SharepointItemLink path={element.path} typeItem={ItemTypeMSOneDrive.Dir} showText={false}/></div>
+                    <SharepointItemLink path={element.path} typeItem={ItemTypeMSOneDrive.Dir} showText={false}/>
 
-                    <div className={""}>
-                        <TreeLink id={element.id}/></div>
+                    <TreeLink tree_id={element.id}/>
 
 
 

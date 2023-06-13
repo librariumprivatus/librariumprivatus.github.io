@@ -1,5 +1,5 @@
 
-// import * as Config from "./config-production.json";
+import * as ConfigValues from "./config-production.json"
 
 //import * as ConfigValues from "./config-production-local.json";
 
@@ -7,8 +7,9 @@
 
 
 // import * as ConfigValues from "./config-production-local.json";
-import * as ConfigValues from "./config-dev-local.json";
+// import * as ConfigValues from "./config-dev-local.json";
 // import * as ConfigValues from "./config-dev-small-local.json";
+
 
 
 export const Values = ConfigValues
