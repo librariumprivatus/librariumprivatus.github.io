@@ -1,4 +1,7 @@
+import collections
 import pathlib
+import sys
+
 from path_tree_generator import PathTree
 import utils
 import re
@@ -105,10 +108,19 @@ def generate_different_id(tree=None):
     return tree
 
 
-def generate_elements_tree(home_path: str | pathlib.Path):
-    home_path = pathlib.Path(home_path)
+def generate_tree(path: str | pathlib.Path):
+    path = pathlib.Path(path)
+    return PathTree(path).dict()
 
-    tree = PathTree(home_path).dict()
+
+def generate_elements_tree(path: str | pathlib.Path):
+    path = pathlib.Path(path)
+
+    print('🌳 Generate Tree for: ', path)
+
+    tree = generate_tree(path)
+    #print('🛍 First Tree')
+    #print(tree)
 
     tree = normalize_tree(tree)
 
@@ -123,25 +135,23 @@ def generate_elements_tree(home_path: str | pathlib.Path):
 
     tree = generate_different_id(tree)
 
+    print()
+
     return tree
 
 
 def generate_elements_from_tree(input_tree):
     def make_elements_recursive(tree):
-        # print('Tree node:', tree.get('nickname'))
-        element = {
-            'nickname': tree.get('nickname'),
-            'type': tree.get('type'),
-            'path': tree.get('path'),
-        }
+        data_element = {}
+        for key, value in tree.items():
+            if key != 'children':
+                data_element[key] = value
 
-        elements[tree.get('id')] = element
+        elements[tree.get('id')] = data_element
 
-        if not tree.get('children'):
-            return tree
-
-        for child_tree in tree['children']:
-            make_elements_recursive(child_tree)
+        if tree.get('children'):
+            for child_tree in tree.get('children'):
+                make_elements_recursive(child_tree)
 
         return tree
 
@@ -236,8 +246,8 @@ def cleaned_stem(target, tags=None):
     return target
 
 
-def clean_file_names(root):
-    print('🟢', 'clean_file_names')
+def brush_filenames(root):
+    print('🟢 Preprocessing. Brush_filenames')
 
     files = utils.walk_files(root)
     files_with_patterns = list(filter(lambda file: file_stem_has_lib_patterns(file), files))
@@ -262,14 +272,18 @@ def clean_file_names(root):
         print()
 
 
-def preprocessingCollection(root):
+def preprocessing_collection(root):
+    print('🟢 Preprocessing')
     root = pathlib.Path(root)
+    if not root.exists():
+        print(f'🔴 Error! Root path is not exist!: {root}')
+        sys.exit()
 
-    clean_file_names(root)
+    brush_filenames(root)
 
-    utils.rename_all_djv_file_with_djvu_suffix_in_dir(root)
+    utils.renaming_all_djv2djvu(root)
 
-    utils.make_all_djvu_to_compressed_pdf(root)
+    utils.mirror_all_djvu_to_pdf(root)
 
 
 
@@ -288,6 +302,27 @@ def is_twink_in_same_dir(djvu):
     return False
 
 
+def add_parent_elem_id(collection, tree=None, parent=''):
+    elem_id = tree['id']
+    if collection.elements[elem_id].data['path'] == '.':
+        parent = '.'
+
+    collection.elements[elem_id].data['parent'] = parent
+
+    if tree.get('children'):
+        for child_tree in tree['children']:
+            add_parent_elem_id(collection, child_tree, parent=elem_id)
+
+
+def add_empty_title(collection):
+    for key in collection.elements.keys():
+        collection.elements[key].data['title'] = ''
+
+        if collection.elements[key].data['path'] == '.':
+            collection.elements[key].data['title'] = collection.elements[key].data['name']
+        else:
+            path = pathlib.Path(collection.elements[key].data['path'])
+            collection.elements[key].data['title'] = path.name
 
 
 

@@ -44,24 +44,12 @@ def text_trimmer(text, top_limit: float = math.inf):
 
 def get_hashed_path(
         path: str | pathlib.Path,
-        parent_limit: int = 10,
-        name_limit: int = 16,
-        paths_divider: str = '🔹',):
-
-    path = pathlib.Path(path)
-    parents = path.parts[:-1]
-
-    parents = list(filter(lambda parent: parent != '/', parents))
-
-    parents_name = [text_trimmer(parent, top_limit=parent_limit) for parent in parents]
-
-    parents_unite = paths_divider.join(parents_name)
-
-    short_name = text_trimmer(path.stem, top_limit=name_limit)
-
-    name = f'{parents_unite}{paths_divider}{short_name}{path.suffix}'
-
-    return name
+        part_text_limit: int = 10,
+        divider: str = '🔹'):
+    parts = pathlib.Path(path).parts
+    parts = list(filter(lambda part: part != '/', parts))
+    parts = [text_trimmer(part.replace(' ', ''), top_limit=part_text_limit) for part in parts]
+    return divider.join(parts)
 
 
 def read_json(path: str | pathlib.Path):
@@ -117,21 +105,50 @@ def get_md5(text):
     return hashlib.md5(text.encode()).hexdigest()
 
 
+def modify_path_if_top_level_path(path):
+    path = pathlib.Path(path)
+    if path != pathlib.Path('.'):
+        return path
+    return pathlib.Path('00000').joinpath(path)
+
+
 def get_id(path: str | pathlib.Path) -> str:
     path = pathlib.Path(path)
+    path = modify_path_if_top_level_path(path)
+
     md5_path_short = text_trimmer(get_md5(path.as_posix()), top_limit=8)
     name_slug = text_trimmer(slug(path.name), top_limit=8)
+    if not name_slug:
+        return md5_path_short
+
     return f'{name_slug}-{md5_path_short}'
+
 
 
 def get_nickname(path: str | pathlib.Path) -> str:
     path = pathlib.Path(path)
+    path = modify_path_if_top_level_path(path)
+
     md5_path = text_trimmer(get_md5(path.as_posix()), top_limit=8)
     return get_hashed_path(path.joinpath(md5_path))
 
 
 def print_tree(tree):
     return print_with_json_dumps(tree)
+
+
+def print_tree2(tree=None, level=0):
+    tabs = '\t' * level
+
+    for key, value in tree.items():
+        if key == 'children':
+            continue
+        print(tabs, key, ': ', value)
+    print()
+
+    if tree.get('children'):
+        for idx, child in enumerate(tree['children']):
+            print_tree2(tree['children'][idx], level + 1)
 
 
 def print_with_json_dumps(data):
@@ -180,8 +197,8 @@ def run(commands_bash_list=None, max_workers: int = 1):
         print(type(futures))
 
 
-def rename_all_djv_file_with_djvu_suffix_in_dir(path):
-    print('🟢', 'rename_all_djv_file_with_djvu_suffix_in_dir')
+def renaming_all_djv2djvu(path):
+    print('🟢 Preprocessing. Renaming all djv to djvu')
 
     files = walk_files(pathlib.Path(path))
 
@@ -244,8 +261,8 @@ def make_djvu_to_compressed_pdf(djvu):
     return pdf
 
 
-def make_all_djvu_to_compressed_pdf(path):
-    print('🟢', 'make_djvu_to_compressed_pdf')
+def mirror_all_djvu_to_pdf(path):
+    print('🟢 Preprocessing. Mirror all djvu to pdf')
 
     files = walk_files(pathlib.Path(path))
     print('Len files: ', len(files))

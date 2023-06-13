@@ -1,5 +1,6 @@
 import pathlib
 import enum
+import sys
 
 import librariumTools as Tools
 
@@ -122,25 +123,47 @@ class Collection:
     store: Store
     tree: dict = {}
     home: pathlib.Path = pathlib.Path('HOME-COLLECTION-DEFAULT')
+    data_dir: pathlib.Path = pathlib.Path('DATA-DIR-COLLECTION-DEFAULT')
 
-    def __init__(self, home: any, store: any):
-        print('🟢 Init Collection')
-        self.home = pathlib.Path(home)
+    def __new__(cls, home: str | pathlib.Path, store: str | pathlib.Path):
+        print(f'🟢 Creating a new Collection object')
+
+        if not pathlib.Path(home).exists():
+            print(f'🔴 Error! Home path is not exist!: {home}')
+            sys.exit()
+
+        if not pathlib.Path(store).exists():
+            print(f'🔴 Error! Store path is not exist!: {store}')
+            sys.exit()
+
+        sub_dirs = [x for x in pathlib.Path(home).iterdir() if x.is_dir()]
+        if len(sub_dirs) != 1:
+            print(f'🔴 Error! Data dir contains zero or more then one dir!')
+            print('\t', 'Dirs: ')
+            [print('\t', d) for d in sub_dirs]
+            sys.exit()
+
+        return object.__new__(cls)
+
+    def __init__(self, home: str | pathlib.Path, store: str | pathlib.Path):
+        print('🟢', 'Initializing Collection')
+
+        self.home = pathlib.Path([x for x in pathlib.Path(home).iterdir() if x.is_dir()][0].as_posix())
+
         self.store = Store(path=pathlib.Path(store))
 
         self.load_store_data()
 
     def load_store_data(self):
-        print('🟢 load_store_data')
+        print('🟢 Load Store Data')
         if self.store.elements_tree_path.exists():
             self.tree = utils.read_json(self.store.elements_tree_path)
 
         if self.store.dir_elements.exists():
-            print('🟢 read_elements', self)
+            print('🟢 Read elements')
             files = utils.walk_files(self.store.dir_elements)
             elements_files = list(filter(lambda f: f.suffix in ['.json'], files))
 
-            output_elements = {}
             for element_file in elements_files:
                 if not (data_element := utils.read_json(element_file)):
                     print('🔸', 'Warning', 'if not (data_element := utils.read_json(element_file)):')
@@ -148,49 +171,49 @@ class Collection:
                 path = data_element.get('path')
                 element = Element(path)
                 element.data = data_element
-
-                id_ = data_element.get('id')
-                # print('👺', id_, path)
-                self.elements[id_] = element
+                id_element = data_element.get('id')
+                self.elements[id_element] = element
 
     def upgrade(self):
-        print('🟢 upgrade', self)
+        print('🟢 🔄 Upgrade Collection', self)
+        print()
 
         self.elements.clear()
 
         self.tree = Tools.generate_elements_tree(self.home)
+        print('🧬 Tree: self.tree: ')
+        utils.print_tree2(self.tree)
+        print()
 
         cand_elements = Tools.generate_elements_from_tree(self.tree)
 
-        for cand_id, cand_data in cand_elements.items():
-            path = pathlib.Path(cand_data.get('path'))
+        for id_cand, data_cand in cand_elements.items():
+            print('🏓 Candidate to Element: ', id_cand)
 
-            print('🏓', 'cand_data', path.name)
-            utils.print_tree(cand_data)
-
+            path = pathlib.Path(data_cand.get('path'))
             element = Element(path)
-            element.data = {
-                'id': cand_id,
-                'nickname': utils.get_nickname(path),
-                'path': path.as_posix(),
-                'home': self.home.as_posix(),
-                'type': cand_data.get('type')
-            }
-            self.elements[cand_id] = element
 
-            print('🥎 ADD element.id', self.elements[cand_id].id)
+            element.data = data_cand
+            element.data['home'] = self.home.as_posix()
+
+            self.elements[id_cand] = element
+
+            print('🥎 Added Element: ', self.elements[id_cand].id)
+            print()
+
+        print('🟢 Add Parent Elem ID')
+        Tools.add_parent_elem_id(self, self.tree)
+
+        print('🟢 Add Empty Titles')
+        Tools.add_empty_title(self)
 
     def save(self):
-        print('🟢 save', self)
+        print('🟢 💾 Save Collection')
         utils.write_json(self.store.elements_tree_path, self.tree)
 
         self.store.mkdir('elements')
-        for id_, element in self.elements.items():
-            path = self.store.dir_elements.joinpath(element.filename)
-            # print('🪢 Save Path Element', path)
-
+        for element in self.elements.values():
             res = utils.write_json(self.store.dir_elements.joinpath(element.filename), element.data)
-            # print('👒 Res Write', res)
 
     def books_ids(self):
         ids_ = list(self.elements.keys())
