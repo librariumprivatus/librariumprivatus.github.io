@@ -7,87 +7,106 @@ import "./Book.css";
 
 // @ts-ignore
 import {LazyLoadImage} from 'react-lazy-load-image-component';
-import {GridSizeGlobalContext, useGlobalStore} from "./GlobalStore";
+import {GridSizeContext, useGlobalStore} from "./ProviderContext";
 import {ItemTypeMSOneDrive, SharepointItemLink} from "./Sharepoint";
 import { TbLayoutBottombarCollapse, TbLayoutNavbarCollapse } from "react-icons/tb";
-import {BsArrowDownRightSquare, BsArrowUpLeftSquare} from "react-icons/bs";
+import {BsArrowDownRightSquare, BsArrowUpLeftSquare, BsTreeFill} from "react-icons/bs";
 import { MdGridOff, MdGridOn } from "react-icons/md";
-import {useContext, useEffect, useLayoutEffect, useRef, useState} from "react";
-import {GridBooks} from "../Pages/Books";
-import {useParams} from "react-router-dom";
+import {useContext, useEffect, useRef, useState} from "react";
+import {Link, useParams} from "react-router-dom";
+import {Button, Modal} from "react-bootstrap";
+import {FaExpandArrowsAlt, FaExternalLinkAlt} from "react-icons/all";
+import Row from "react-bootstrap/Row";
 
 
-export function CardBook(props: any){
+export function SingleBookFullDetails(props:any){
+    let cover_book_url = "/bg-no-book-cropped.png"
+    if(props.book){
+        cover_book_url = new URL(props.book.cover, Config.covers_dir_url).href}
 
-    const cover_book_url = new URL(props.book.cover, Config.covers_dir_url)
-    let ratio;
-    // @ts-ignore
-    return (
-            <Card className="book-card shadow mb-5 bg-body rounded-0">
-                <div className={"book-card-img"} >
-                    <div className={"book-card-img-default"} style={{}}>
-                        <LazyLoadImage
-                            className={"card-img-top rounded-0"}
-                            src={cover_book_url}
-                            effect="blur"
-                        />
-                    </div>
+    return(<div>
+        <Row>
+            <Col xs={12} sm={6} md={4}>
+                <div className={"text-center"}>
+                    <img src={cover_book_url} alt={"COver"} className={"single-book-img shadow rounded-0 bg-body"}/>
                 </div>
-                <Card.Body>
-                    <Card.Title>
-                        {props.book.title}
-                        <br/>
-                        {props.book.title}
-                    </Card.Title>
-                </Card.Body>
-            </Card>
+            </Col>
+            <Col xs={12} sm={6} md={8}>
+                <div className={"mb-3"}>
+                    <strong>
+                        Title
+                    </strong>
+                    <br/>
+
+                    <h4>
+                        {props.book && props.book.title}
+                    </h4>
+                    <br/>
+                </div>
+
+            </Col>
+        </Row>
+    </div>)
+}
+
+
+
+function MyVerticallyCenteredModal(props: any) {
+    return (
+        <Modal
+            {...props}
+            size="lg"
+            aria-labelledby="contained-modal-title-vcenter"
+            centered>
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    {props.book.title}
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <SingleBookFullDetails book={props.book}/>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button onClick={props.onHide}>Close</Button>
+            </Modal.Footer>
+        </Modal>
     );
 }
 
 
-function Placeholder(ratio: any){
-    return(
-        <div data-ratio={ratio}>
-            <h4>Placeholder</h4>
-            <h4>Ratio:  {ratio}</h4>
-        </div>
-    )
-}
-
-
-// style={{height: 'calc(100vw*'+book.cover_ratio+'/1000)'}}
-
-export function BookByID(props: any){
-    //console.log(props.id);
-    const context = useGlobalStore();
+export function CardBook(props: any){
+    const context = useGlobalStore()
     // @ts-ignore
-    let book = context.elements[props.id];
-    //console.log('book', book);
-
-    const no_cover_url = "/bg-no-book-cropped.png"
-    const cover_book_url = new URL(book.cover, Config.covers_dir_url).href
-
-    let aspectRatio: number =  700
-
-    let cover_ratio = 0
+    let book = context.elements[props.id]
 
 
-    if (book.cover){
-        cover_ratio = Number(book.cover_ratio)
-        aspectRatio = 1/Number(book.cover_ratio)
+    const no_cover_book_url = new URL('bg-no-book-cropped.png' ,Config.base_url)
+
+    let cover_book_url = no_cover_book_url
+
+    const coverRatioDEfault = 1.3
+    let paddingTop: number =  coverRatioDEfault * 100
+    let aspectRatio: number = 1 / coverRatioDEfault
+
+    if (book.cover !== undefined){
+        cover_book_url = new URL(book.cover, Config.covers_dir_url)
+        paddingTop = Number(book.cover_ratio)*100
+        aspectRatio = 1 / Number(book.cover_ratio)
     }
 
-    const book_url = "#/book/"+props.id
+    const book_url = "/book/"+props.id+"#title"
 
-    const contextGridSize = useContext(GridSizeGlobalContext);
-
-    let titleSize = "h5"
-    if(contextGridSize.gridSize >= 5)
-        titleSize = "h6"
+    const contextGridSize = useContext(GridSizeContext);
+    const titleSize = contextGridSize.gridSize >= 5? "h6" : "h5"
 
     /*
     src={!book.cover ? no_cover_url : cover_book_url}
      */
+
+    const [modalShow, setModalShow] = React.useState(false);
+
+    console.log('Book cover: ')
+    console.log(book.cover)
 
     // @ts-ignore
     return (
@@ -96,69 +115,54 @@ export function BookByID(props: any){
                 <div
                     className={"book-card-img shadow rounded-0 bg-body"}
                     style={{
-                        aspectRatio: aspectRatio,
-                        backgroundImage: `url(${no_cover_url})`,
+                        backgroundImage: `url(${no_cover_book_url.pathname})`,
                         backgroundSize: "cover",
+                        width: "100%",
+                        aspectRatio: `${aspectRatio}`,
                     }}>
                     {book.cover &&
-                        <LazyLoadImage
-                            className={"card-img-top rounded-0 text-center"}
-                            src={cover_book_url}
-                            effect="blur"
-                            threshold={5000}
-                        />}
+                        <a className={"book-card-img-a"} onClick={() => setModalShow(true)}>
+                            <LazyLoadImage
+                                className={"card-img-top rounded-0 text-center"}
+                                src={cover_book_url}
+                                effect="blur"
+                                threshold={5000}/>
+                        </a>}
                 </div>
                 <Card.Body>
                     <div className={titleSize}>
                         {book.title}</div>
 
-                    <div className={""}>
-                        <SharepointItemLink path={book.path} typeItem={ItemTypeMSOneDrive.File} showText={false}/>
-                        <small>
-                            <a href={book_url}>
-                                book / {book.id}
-                            </a>
-                        </small>
+                    <div className={"flex-column"}>
+                        <div className={"small"}>
+                            <SharepointItemLink path={book.path} typeItem={ItemTypeMSOneDrive.File} showText={true}/></div>
+                        <div className={"small"}>
+                            <Link to={book_url}>
+                                <FaExternalLinkAlt/>&nbsp;NewTab</Link></div>
+                        <div className={"small"}>
+                            <a className={"link-primary"} onClick={() => setModalShow(true)}>
+                                <FaExpandArrowsAlt/>&nbsp;Details</a></div>
                     </div>
 
                     <div className={"d-none"}>
                         books.cover_ratio: {book.cover_ratio}
                         <br/>
-                        cover_ratio: {cover_ratio}
-                        <br/>
-                        aspectRatio: {aspectRatio}
                     </div>
 
                 </Card.Body>
             </Card>
+
+            <MyVerticallyCenteredModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+                book={book}
+            />
         </Col>
     );
 }
 
 
-/*
-    const covers_dir_url = Config.data_repo_url+"/"+Config.store_dir+"/"+Config.covers_dir;
-    const cover_src = covers_dir_url+"/"+element.cover;
-
-
-
-
-
- */
-
-/*
-
-<strong>🔹 {element.title}</strong> <LinkMSOneDrive path={element.relative}/>
-
-
-<p><LinkMSOneDrive path={book.relative}/></p>
-
-
- */
-
-
-
-export function BookLisItem(props: any){
+export function BookListItem(props: any){
     const context = useGlobalStore();
     // @ts-ignore
     let element = context.elements[props.id]
@@ -181,7 +185,15 @@ const showIconsText = false;
 const showStatusText = true;
 
 
-const hideBRtag = "";
+function TreeLink(props: any){
+    const url = '/#/treeid/'+props.id
+
+    return(<>
+        <a className="link-primary px-1" href={url}>
+            <BsTreeFill /></a>
+    </>)
+}
+
 
 export function DirListItem(props: any){
 
@@ -353,6 +365,10 @@ export function DirListItem(props: any){
                     <div className={""}>
                         <SharepointItemLink path={element.path} typeItem={ItemTypeMSOneDrive.Dir} showText={false}/></div>
 
+                    <div className={""}>
+                        <TreeLink id={element.id}/></div>
+
+
 
                 </div>
             </div>
@@ -395,7 +411,7 @@ export function DirListItem(props: any){
                     {files.map((file_id: any) => {
                         return(
                             <li key={file_id+"_files_li"}>
-                                <BookLisItem id={file_id}/></li>)})}</ul>
+                                <BookListItem id={file_id}/></li>)})}</ul>
                 : <div className={"px-5"}>
                     <h6>Grid Book List</h6>
                     <GridBooks books_ids={files}/>
@@ -404,18 +420,27 @@ export function DirListItem(props: any){
 
 
         </div>
-    );
+    )
 }
 
 
-export function TreeParam(props: any) {
-    let { tree_id } = useParams();
+export function GridBooks(props: any) {
+    const contextGridSize = useContext(GridSizeContext);
+
     return (<>
-        <h4>tree_id</h4>
-        <br/>
-        {tree_id}
-
-    </>);
+        <Row xs={contextGridSize.gridSize}
+             sm={contextGridSize.gridSize}
+             md={contextGridSize.gridSize}
+             lg={contextGridSize.gridSize}
+             xl={contextGridSize.gridSize}
+             className="books-grid grid-test"
+             data-masonry='{"percentPosition": true }'>
+            {props.books_ids.map(
+                (book_id: any) => <CardBook id={book_id} key={book_id}/>)}
+        </Row>
+    </>)
 }
+
+
 
 

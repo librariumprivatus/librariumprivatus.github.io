@@ -1,10 +1,15 @@
 
-// import * as Config from "./config.production.json";
+// import * as Config from "./config-production.json";
+
+//import * as ConfigValues from "./config-production-local.json";
+
+// import * as ConfigValues from "./config-dev-local.json";
 
 
-import * as ConfigValues from "./config.production.json";
+// import * as ConfigValues from "./config-production-local.json";
+import * as ConfigValues from "./config-dev-local.json";
+// import * as ConfigValues from "./config-dev-small-local.json";
 
-//import * as ConfigValues from "./config.production-local.json";
 
 export const Values = ConfigValues
 
@@ -14,6 +19,8 @@ export const repo_url = new URL(ConfigValues.hostname)
 export const store_url = new URL(ConfigValues.store_dir, repo_url)
 export const covers_dir_url = new URL(ConfigValues.covers_dir, store_url)
 export const jsons_dir_url = new URL(ConfigValues.jsons_dir, store_url)
+
+export const base_url = new URL(document.baseURI)
 
 
 export const jsons = [
@@ -39,8 +46,9 @@ export const jsons = [
     },
 ]
 
+export const cookies_gridSize = "gridSize"
 
-
+export const cookies_sharepointWelcomeUrl = "sharepointWelcomeUrl"
 
 
 

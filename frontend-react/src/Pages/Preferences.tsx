@@ -1,14 +1,16 @@
 import * as React from "react";
 import {useParams} from "react-router-dom";
-import {GridSizeGlobalContext, useGlobalStore} from "../Elements/GlobalStore";
-import {AiOutlineLink, BiLinkAlt, BsLink45Deg, HiLink, HiOutlineLink, ImLink,
-    IoIosLink, SlMagnifierAdd, SlMagnifierRemove} from "react-icons/all";
+import {GridSizeContext, useGlobalStore} from "../Elements/ProviderContext";
+import {
+    AiOutlineLink, BiLinkAlt, BsLink45Deg, FaCat, FaExpandArrowsAlt, FaModx, HiLink, HiOutlineLink, ImLink,
+    IoIosLink, SlMagnifierAdd, SlMagnifierRemove
+} from "react-icons/all";
 import {useContext} from "react";
 import {useCookies} from "react-cookie";
 import * as Config from "../Config/Config";
 
 function GridSizePreferences() {
-    const contextGridSize = useContext(GridSizeGlobalContext);
+    const contextGridSize = useContext(GridSizeContext);
 
     const minGridSize = 1
     const maxGridSize = 6
@@ -81,7 +83,7 @@ function JSONSlistLoaded() {
     return (<div>
         <ul>
             {Config.jsons.map((json) =>
-            {return <li>
+            {return <li key={json.url.href}>
                 <a href={json.url.href}>
                     {json.url.pathname.split('/').pop()}</a>
                 </li>})}
@@ -98,35 +100,28 @@ function Preferences() {
         <div className={"container"}>
 
             <ul>
-                <li>
+                <li key={'🍏 GridSizePreferences'}>
                     <h5>🍏 GridSizePreferences</h5>
                     <GridSizePreferences/>
-                    <div className={"mb-4"}/>
-                </li>
-                <li>
+                    <div className={"mb-4"}/></li>
+                <li key={'🍎 Cookies Preferences'}>
                     <h5>🍎 Cookies Preferences</h5>
                     <CookiesPreferences/>
-                    <div className={"mb-4"}/>
-                </li>
-                <li>
-
+                    <div className={"mb-4"}/></li>
+                <li key={'🍐 MS One Drive Preferences'}>
                     <h5>🍐 MS One Drive Preferences</h5>
                     <div className={"mb-2"}>URL: {context.sharepointURL}</div>
                     <MSOneDrivePreferences/>
-                    <div className={"mb-4"}/>
-                </li>
-                <li>
-
+                    <div className={"mb-4"}/></li>
+                <li key={'🍊 JSONS'}>
                     <h5>🍊 JSONS</h5>
                     <JSONSlistLoaded/>
-                    <div className={"mb-4"}/>
-
-                </li>
-                <li>
-
-
+                    <div className={"mb-4"}/></li>
+                <li key={' 🍋 🍏 🍎 🍐 🍊 🍋'}>
                     <h5> 🍋 🍏 🍎 🍐 🍊 🍋 🍌 🍉 🍇 🍓 🫐 🍈 🍒 🍑 🥭 🍍 🥥 🥝 🍅 🍆 🥑 🥦 🥬 🥒 🌶 🫑 🌽 🥕</h5>
-                </li>
+                    <FaModx/>
+                    <FaCat/>
+                    <FaExpandArrowsAlt/></li>
             </ul>
 
         </div></>);

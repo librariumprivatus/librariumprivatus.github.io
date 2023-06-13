@@ -1,18 +1,12 @@
 import * as React from "react";
-import {GridSizeGlobalContext, useGlobalStore} from "../Elements/GlobalStore";
-import Row from "react-bootstrap/Row";
+import {GridSizeContext, useGlobalStore} from "../Elements/ProviderContext";
 
-import {useParams} from "react-router-dom";
-import Col from "react-bootstrap/Col";
-import * as Config from "../Config/Config";
-
-import "./OneBook.css";
 import {useContext} from "react";
-import {BookByID} from "../Elements/Book";
+import {GridBooks} from "../Elements/Book";
 
 function BooksRandom() {
     const context = useGlobalStore();
-    const contextGridSize = useContext(GridSizeGlobalContext);
+    const contextGridSize = useContext(GridSizeContext);
 
     const randomBooks: any[] = []
 
@@ -21,29 +15,18 @@ function BooksRandom() {
     const randomInt = (min: number, max: number) =>
         Math.floor(Math.random() * (max - min + 1)) + min;
 
-    let rands: never[] = []
+    let randomBooks_ids: never[] = []
 
     const MAX_BOOKS = 10
     for (let i = 0; i < MAX_BOOKS; i++) {
-        const r = randomInt(0, context.books.length)
-        const r_book_id = context.books[r]
-        rands.push(r_book_id)
+        const randomNumber = randomInt(0, context.books.length)
+        const randomBook_id = context.books[randomNumber]
+        randomBooks_ids.push(randomBook_id)
     }
     return (<>
         <h1>RandomBooks</h1>
-
-        <Row xs={contextGridSize.gridSize}
-             sm={contextGridSize.gridSize}
-             md={contextGridSize.gridSize}
-             lg={contextGridSize.gridSize}
-             xl={contextGridSize.gridSize}
-             className="books-grid grid-test"
-             data-masonry='{"percentPosition": true }'>
-            {rands.map(
-                (book_id: any) => <BookByID id={book_id} key={book_id}/>)}
-        </Row>
-
-    </>);
+        <GridBooks books_ids={randomBooks_ids}/>
+    </>)
 }
 
 export default BooksRandom

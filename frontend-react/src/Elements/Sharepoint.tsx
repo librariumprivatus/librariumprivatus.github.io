@@ -1,5 +1,5 @@
 import React from "react";
-import {ImOnedrive} from "react-icons/all";
+import {FaCloudUploadAlt, ImOnedrive} from "react-icons/all";
 import * as Config from "../Config/Config";
 
 
@@ -90,7 +90,7 @@ export function SharepointItemLink(props: {path: string, typeItem: ItemTypeMSOne
 
     return(
         <a href={getTypedURL(props.path, props.typeItem)} target={"_blank"}>
-            <ImOnedrive/> {props.showText && text_link}
+            <FaCloudUploadAlt/>&nbsp;{props.showText && text_link}
         </a>);
 }
 

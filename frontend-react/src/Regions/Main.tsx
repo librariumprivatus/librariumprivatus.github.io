@@ -1,15 +1,15 @@
 import * as React from "react";
 import {Outlet} from "react-router-dom";
-import {GlobalStoreProvider2} from "../Elements/GlobalStore";
+import {ProviderGlobalContext} from "../Elements/ProviderContext";
 import { CookiesProvider } from 'react-cookie';
 
 function Main() {
     return (
         <main className={"mb-5"}>
             <CookiesProvider>
-                <GlobalStoreProvider2>
+                <ProviderGlobalContext>
                     <Outlet />
-                </GlobalStoreProvider2>
+                </ProviderGlobalContext>
             </CookiesProvider>
         </main>
     );

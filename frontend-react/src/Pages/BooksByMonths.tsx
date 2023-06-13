@@ -1,9 +1,6 @@
 import * as React from "react";
-import {CardBook} from "../Elements/Book";
-import {useGlobalStore} from "../Elements/GlobalStore";
-import Row from "react-bootstrap/Row";
-import {GridBooks} from "./Books";
-
+import {useGlobalStore} from "../Elements/ProviderContext";
+import {GridBooks} from "../Elements/Book";
 
 function getHumanReadable_YYMM(stamp: any){
     const date = new Date(Number(stamp + '000'));
@@ -12,7 +9,6 @@ function getHumanReadable_YYMM(stamp: any){
     //console.log(formattedStr);
     return formattedStr;
 }
-
 
 function BooksByMonths() {
     const context = useGlobalStore();
@@ -27,7 +23,7 @@ function BooksByMonths() {
                 <GridBooks books_ids={context.booksByMonths[month]}/>
             </>)
         )}
-    </>);
+    </>)
 }
 
 

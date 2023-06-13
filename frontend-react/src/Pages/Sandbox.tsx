@@ -1,5 +1,5 @@
 import * as React from "react";
-import {useGlobalStore} from "../Elements/GlobalStore";
+import {useGlobalStore} from "../Elements/ProviderContext";
 import {TbLayoutBottombarCollapse, TbLayoutNavbarCollapse} from "react-icons/tb";
 import {RiCollageFill, RiCollageLine} from "react-icons/ri";
 import {
